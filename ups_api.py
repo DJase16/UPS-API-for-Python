@@ -49,8 +49,11 @@ class UpsApiClientTesting:
                 redirect_r + 'client_id=' + self.client_id + '&redirect_uri' +
                 self.redirect_uri + '&response_type=code&scope=read&type=ups_com_api'
             )
+        # Print Error Information
         else:
             print(response.status_code)
+            print(response.json()['response']['errors'][0]['code'])
+            print(response.json()['response']['errors'][0]['message'])
 
         # Debugging
         if debugging:
@@ -86,8 +89,11 @@ class UpsApiClientTesting:
             # And then print the tokens.
             print('Access Token: ' + response.json().get('access_token'))
             print('Refresh Token: ' + response.json().get('refresh_token'))
+        # Print Error Information
         else:
             print(response.status_code)
+            print(response.json()['response']['errors'][0]['code'])
+            print(response.json()['response']['errors'][0]['message'])
 
         if debugging:
             print("Payload: ", payload)
@@ -117,8 +123,11 @@ class UpsApiClientTesting:
             print('Access Token: ' + response.json().get('access_token'))
             print('Refresh Token: ' + response.json().get('refresh_token'))
             print('Refresh Token TTL: ' + self.refresh_ttl)
+        # Print Error Information
         else:
             print(response.status_code)
+            print(response.json()['response']['errors'][0]['code'])
+            print(response.json()['response']['errors'][0]['message'])
 
         if debugging:
             print("Payload: ", payload)
@@ -144,3 +153,47 @@ class UpsApiClientTesting:
 
         print(response.json().get('access_token'))
         self.access_t = response.json().get('access_token')
+
+    # Address Validation
+    # For request option set to 1 for Validation, to for Classification, and 3 for both.
+    # For rr_indicator the default is False for just local validation, True will add more params to the equation.
+    # For num_candidates select the number of results you will allow.
+    def address_validation(self, request_option='1', version='v1', rr_indicator='False', num_candidates=1):
+        url = "https://wwwcie.ups.com/api/addressvalidation/" + version + "/" + request_option
+
+        query = {
+            "regionalrequestindicator": rr_indicator,
+            "maximumcandidatelistsize": num_candidates
+        }
+
+        # This is a testing payload. For actual results use Production methods.
+        payload = {
+            "XAVRequest": {
+                "AddressKeyFormat": {
+                    "ConsigneeName": "RITZ CAMERA CENTERS-1749",
+                    "BuildingName": "Innoplex",
+                    "AddressLine": [
+                        "26601 ALISO CREEK ROAD",
+                        "STE D",
+                        "ALISO VIEJO TOWN CENTER"
+                    ],
+                    "Region": "ROSWELL,GA,30076-1521",
+                    "PoliticalDivision2": "ALISO VIEJO",
+                    "PoliticalDivision1": "CA",
+                    "PostcodePrimaryLow": "92656",
+                    "PostcodeExtendedLow": "1521",
+                    "Urbanization": "porto arundal",
+                    "CountryCode": "US"
+                }
+            }
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer" + self.access_t
+        }
+
+        response = requests.post(url, json=payload, headers=headers, params=query)
+
+        data = response.json()
+        print(data)
