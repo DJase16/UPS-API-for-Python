@@ -1,4 +1,12 @@
 import requests
+import random
+import string
+
+
+# A custom function to generate the IDs we will be using for transID
+def _id_generator():
+    id_32 = ''.join(random.choices(string.ascii_uppercase + string.digits, k=32))
+    return str(id_32)
 
 
 # This is the class for testing your UPS App and api calls
@@ -216,7 +224,92 @@ class UpsApiClientTesting:
 
         headers = {
             "Content-Type": "application/json",
-            "transID": self.client_id,
+            "transID": _id_generator(),
+            "transactionSrc": self.client_secret,
+            "Authorization": f'Bearer {self.access_t}'
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        data = response.json()
+        print(data)
+
+    def audit_pre_check(self, version='v1'):
+        url = "https://wwwcie.ups.com/api/dangerousgoods/" + version + "/acceptanceauditprecheck"
+
+        # Testing Payload
+        payload = {
+            "AcceptanceAuditPreCheckRequest": {
+                "Request": {
+                    "RequestOption": "Request",
+                    "TransactionReference": {
+                        "CustomerContext": "",
+                        "TransactionIdentifier": "TransactionIdentifier"
+                    }
+                },
+                "OriginRecordTransactionTimestamp": "      ",
+                "Shipment": {
+                    "ShipperNumber": " ",
+                    "ShipFromAddress": {
+                        "AddressLine": "226 ELMWOOD AVE",
+                        "City": "BOGOTA",
+                        "StateProvinceCode": "NJ",
+                        "PostalCode": "7603",
+                        "CountryCode": "US"
+                    },
+                    "ShipToAddress": {
+                        "AddressLinde": "MY STREET 11",
+                        "City": "DIEGEM",
+                        "StateProvinceCode": "          ",
+                        "PostalCode": "1831",
+                        "CountryCode": "BE"
+                    },
+                    "Service": {
+                        "Code": "01",
+                        "Description": "GROUND "
+                    },
+                    "RegulationSet": "IATA",
+                    "Package": {
+                        "PackageIdentifier": "12",
+                        "PackageWeight": {
+                            "Weight": "12",
+                            "UnitOfMeasurement": {
+                                "Code": "KGS",
+                                "Description": "KILOS"
+                            }
+                        },
+                        "QValue": "0",
+                        "OverPackedIndicator": "I",
+                        "TransportationMode": "PAX",
+                        "EmergencyContact": "SELF",
+                        "ChemicalRecord": {
+                            "ChemicalRecordIdentifier": "12",
+                            "ReportableQuantity": "RQ",
+                            "ClassDivisionNumber": "3",
+                            "SubRiskClass": "            ",
+                            "IDNumber": "UN2621",
+                            "PackagingGroupType": "III",
+                            "Quantity": "10",
+                            "UOM": "KGS",
+                            "PackagingInstructionCode": "Y344",
+                            "ProperShippingName": "ACETYL METHYL CARBINOL",
+                            "TechnicalName": "            ",
+                            "AdditionalDescription": "N",
+                            "PackagingType": "Fiberboard Box",
+                            "HazardLabelRequired": "LABEL IT",
+                            "PackagingTypeQuantity": "22",
+                            "CommodityRegulatedLevelCode": "LQ",
+                            "TransportCategory": "3",
+                            "TunnelRestrictionCode": "1"
+                        }
+                    }
+                }
+            }
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "transId": _id_generator(),
             "transactionSrc": self.client_secret,
             "Authorization": f'Bearer {self.access_t}'
         }
@@ -227,7 +320,7 @@ class UpsApiClientTesting:
         print(data)
 
 
-# Don't forget to comment this!
+# Function to return an address in a way the UPS API can use.
 def format_address(consignee_name, building_name, address_line, region, city, state, zip_code, zip_code_ext,
                    urbanization, country_code):
     payload = {
