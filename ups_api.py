@@ -319,6 +319,106 @@ class UpsApiClientTesting:
         data = response.json()
         print(data)
 
+    # Freight Pickup
+    # Used to manage TForce Freight
+    def freight_pickup(self, version='v1'):
+        url = "https://wwwcie.ups.com/api/freight/" + version + "/pickups"
+
+        # Testing Payload
+        payload = {
+            "FreightPickupRequest": {
+                "Request": {
+                    "TransactionReference": {
+                        "CustomerContext": ""
+                    }
+                },
+                "DestinationPostalCode": "20019",
+                "DestinationCountryCode": "US",
+                "Requester": {
+                    "ThirdPartyIndicator": "true",
+                    "AttentionName": "Pickup Testing",
+                    "EMailAddress": "test@ups.com",
+                    "Name": "Pickup Testing",
+                    "Phone": {
+                        "Number": "12345667890",
+                        "Extension": "122"
+                    }
+                },
+                "ShipFrom": {
+                    "AttentionName": "Pickup testing",
+                    "Name": "Pickup Testin",
+                    "Address": {
+                        "AddressLine": [
+                            "123 main st ",
+                            "address 2",
+                            "address 3"
+                        ],
+                        "City": "Roswell",
+                        "StateProvinceCode": "GA",
+                        "PostalCode": "30076",
+                        "CountryCode": "US"
+                    },
+                    "Phone": {
+                        "Number": "1290987654",
+                        "Extension": "123"
+                    },
+                    "EMailAddress": "test@ups.com"
+                },
+                "PickupDate": "20190228",
+                "EarliestTimeReady": "0800",
+                "LatestTimeReady": "1600",
+                "ShipmentDetail": {
+                    "PackagingType": {
+                        "Code": "CAN",
+                        "Description": "can"
+                    },
+                    "NumberOfPieces": "20",
+                    "DescriptionOfCommodity": "twenty",
+                    "Weight": {
+                        "UnitOfMeasurement": {
+                            "Code": "LBS",
+                            "Description": "pounds"
+                        },
+                        "Value": "102"
+                    }
+                },
+                "PickupInstructions": "Pickup Instructions ",
+                "AdditionalComments": "Additonal Instructions",
+                "HandlingInstructions": "Handling Instructions",
+                "SpecialInstructions": "Special Instructions ",
+                "DeliveryInstructions": "Delivery Instructions"
+            }
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "transId": _id_generator(),
+            "transactionSrc": self.client_secret,
+            "Authorization": f'Bearer {self.access_t}'
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        data = response.json()
+        print(data)
+
+    # Freight Pickup Cancel
+    def freight_pickup_cancel(self, pickup_num, version='v1'):
+        url = "https://wwwcie.ups.com/api/freight/" + version + "/pickups"
+
+        # Header, Pickup Request Confiirmation not provided.
+        headers = {
+            "transId": _id_generator(),
+            "transactionSrc": _id_generator(),
+            "PickupRequestConfirmationNumber": pickup_num,
+            "Authorization": f'Bearer {self.access_t}'
+        }
+
+        response = requests.delete(url, headers=headers)
+
+        data = response.json()
+        print(data)
+
 
 # Function to return an address in a way the UPS API can use.
 def format_address(consignee_name, building_name, address_line, region, city, state, zip_code, zip_code_ext,
