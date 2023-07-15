@@ -419,6 +419,318 @@ class UpsApiClientTesting:
         data = response.json()
         print(data)
 
+    # Freight Rate
+    # Request must be either 'ground' or 'air'
+    def freight_rate(self, request='ground', version='v1'):
+        url = "https://wwwcie.ups.com/api/freight/" + version + "/rating/" + request
+
+        # Testing Payload
+        payload = {
+            "FreightRateRequest": {
+                "ShipFrom": {
+                    "Name": "Test US Shipper",
+                    "Address": {
+                        "AddressLine": "123 Lane",
+                        "City": "TIMONIUM",
+                        "StateProvinceCode": "MD",
+                        "PostalCode": "21093",
+                        "CountryCode": "US",
+                        "ResidentialAddressIndicator": ""
+                    },
+                    "AttentionName": "Test Shipper",
+                    "Phone": {
+                        "Number": "4444444444",
+                        "Extension": "4444"
+                    },
+                    "EMailAddress": "gcc0htq@ups.com"
+                },
+                "ShipperNumber": "AT0123",
+                "ShipTo": {
+                    "Name": "Dilbert's Derbies",
+                    "Address": {
+                        "AddressLine": "555 Main St",
+                        "City": "LOUISVILLE",
+                        "StateProvinceCode": "KY",
+                        "PostalCode": "40201",
+                        "CountryCode": "US"
+                    },
+                    "AttentionName": "Dilbert",
+                    "Phone": {
+                        "Number": "8459865555"
+                    }
+                },
+                "PaymentInformation": {
+                    "Payer": {
+                        "Name": "Test US Shipper",
+                        "Address": {
+                            "AddressLine": "123 Lane",
+                            "City": "LUTHERVILLE TIMONIUM",
+                            "StateProvinceCode": "MD",
+                            "PostalCode": "21093",
+                            "CountryCode": "US"
+                        },
+                        "ShipperNumber": "AT0123",
+                        "AccountType": "1",
+                        "AttentionName": "Test Shipper",
+                        "Phone": {
+                            "Number": "4444444444",
+                            "Extension": "4444"
+                        },
+                        "EMailAddress": "gcc0htq@ups.com"
+                    },
+                    "ShipmentBillingOption": {
+                        "Code": "10"
+                    }
+                },
+                "Service": {
+                    "Code": "308"
+                },
+                "Commodity": {
+                    "Description": "FRS-Freight",
+                    "Weight": {
+                        "UnitOfMeasurement": {
+                            "Code": "LBS"
+                        },
+                        "Value": "150"
+                    },
+                    "Dimensions": {
+                        "UnitOfMeasurement": {
+                            "Code": "IN",
+                            "Description": " "
+                        },
+                        "Length": "9",
+                        "Width": "5",
+                        "Height": "4"
+                    },
+                    "NumberOfPieces": "1",
+                    "PackagingType": {
+                        "Code": "PLT"
+                    },
+                    "FreightClass": "60"
+                },
+                "DensityEligibleIndicator": "",
+                "AlternateRateOptions": {
+                    "Code": "3"
+                },
+                "PickupRequest": {
+                    "PickupDate": "20170923"
+                },
+                "GFPOptions": {
+                    "GPFAccesorialRateIndicator": ""
+                },
+                "TimeInTransitIndicator": ""
+            }
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "transId": _id_generator(),
+            "transactionSrc": self.client_secret,
+            "Authorization": f'Bearer {self.access_t}'
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        data = response.json()
+        print(data)
+
+    # Freight Ship
+    def freight_ship(self, request='ground', version='v1'):
+        url = "https://wwwcie.ups.com/api/freight/" + version + "/shipments/" + request
+
+        # Testing Payload
+        payload = {
+            "FreightShipRequest": {
+                "Shipment": {
+                    "ShipFrom": {
+                        "Name": "ShipFromName",
+                        "Address": {
+                            "AddressLine": "1234 Main Street",
+                            "City": "Atlanta",
+                            "StateProvinceCode": "GA",
+                            "PostalCode": "30332",
+                            "CountryCode": "US"
+                        },
+                        "AttentionName": "AttentionName",
+                        "Phone": {
+                            "Number": "5555555555"
+                        }
+                    },
+                    "ShipperNumber": "7210A2",
+                    "ShipTo": {
+                        "Name": "ShipToName",
+                        "Address": {
+                            "AddressLine": "123 MAin Street",
+                            "City": "Canton",
+                            "StateProvinceCode": "GA",
+                            "PostalCode": "30115",
+                            "CountryCode": "US"
+                        },
+                        "AttentionName": "AttentionName",
+                        "Phone": {
+                            "Number": "5555555555"
+                        }
+                    },
+                    "PaymentInformation": {
+                        "Payer": {
+                            "Name": "PayerName",
+                            "Address": {
+                                "AddressLine": "123 MAin Street",
+                                "City": "Canton",
+                                "StateProvinceCode": "GA",
+                                "PostalCode": "30115",
+                                "CountryCode": "US"
+                            },
+                            "ShipperNumber": "7210A2",
+                            "AccountType": "1",
+                            "AttentionName": "AttentionName",
+                            "Phone": {
+                                "Number": "5555555555"
+                            }
+                        },
+                        "ShipmentBillingOption": {
+                            "Code": "10"
+                        }
+                    },
+                    "Service": {
+                        "Code": "308"
+                    },
+                    "HandlingUnitOne": {
+                        "Quantity": "2",
+                        "Type": {
+                            "Code": "PLT"
+                        }
+                    },
+                    "Commodity": {
+                        "Description": "Goods",
+                        "Weight": {
+                            "UnitOfMeasurement": {
+                                "Code": "LBS"
+                            },
+                            "Value": "190"
+                        },
+                        "Dimensions": {
+                            "UnitOfMeasurement": {
+                                "Code": "IN"
+                            },
+                            "Length": "11",
+                            "Width": "11",
+                            "Height": "11"
+                        },
+                        "NumberOfPieces": "10",
+                        "PackagingType": {
+                            "Code": "PKG"
+                        },
+                        "FreightClass": "110"
+                    },
+                    "DensityEligibleIndicator": "",
+                    "PickupRequest": {
+                        "Requester": {
+                            "AttentionName": "AttentionName",
+                            "EMailAddress": "test@ups.com",
+                            "Name": "DG",
+                            "Phone": {
+                                "Number": "5555555555"
+                            }
+                        },
+                        "PickupDate": "20220725",
+                        "EarliestTimeReady": "0723",
+                        "LatestTimeReady": "1700"
+                    },
+                    "TimeInTransitIndicator": ""
+                },
+                "Miscellaneous": {
+                    "WSVersion": "21.0.11",
+                    "ReleaseID": "07.12.2008"
+                }
+            }
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "transId": _id_generator(),
+            "transactionSrc": self.client_secret,
+            "Authorization": f'Bearer {self.access_t}'
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        data = response.json()
+        print(data)
+
+    # Landed Cost
+    # Estimate for International Shipments
+    def landed_cost(self, version='v1'):
+        url = "https://wwwcie.ups.com/api/landedcost/" + version + "/quotes"
+
+        # Testing Payload
+        payload = {
+            "currencyCode": "GBP",
+            "transID": "325467165",
+            "allowPartialLandedCostResult": False,
+            "shipment": {
+                "id": "ShipmentID83",
+                "importCountryCode": "GB",
+                "importProvince": "",
+                "shipDate": "",
+                "exportCountryCode": "US",
+                "incoterms": "",
+                "shipmentItems": [
+                    {
+                        "commodityId": "1",
+                        "grossWeight": "",
+                        "grossWeightUnit": "",
+                        "priceEach": "125",
+                        "hsCode": "400932",
+                        "quantity": 24,
+                        "UOM": "Each",
+                        "originCountryCode": "GB",
+                        "commodityCurrencyCode": "GBP",
+                        "description": ""
+                    },
+                    {
+                        "commodityId": "4",
+                        "grossWeight": "",
+                        "grossWeightUnit": "",
+                        "priceEach": "0.5",
+                        "hsCode": "",
+                        "quantity": 900,
+                        "UOM": "Each",
+                        "originCountryCode": "GB",
+                        "commodityCurrencyCode": "GBP",
+                        "description": "Cord5mm{PK50Yellow/Red"
+                    }
+                ],
+                "transModes": "",
+                "transportCost": "",
+                "shipmentType": "Sale"
+            }
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "transId": "string",
+            "transactionSrc": "testing",
+            "Authorization": "Bearer <YOUR_TOKEN_HERE>"
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        data = response.json()
+        print(data)
+
+        headers = {
+            "Content-Type": "application/json",
+            "transId": _id_generator(),
+            "transactionSrc": self.client_secret,
+            "Authorization": f'Bearer {self.access_t}'
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        data = response.json()
+        print(data)
+
 
 # Function to return an address in a way the UPS API can use.
 def format_address(consignee_name, building_name, address_line, region, city, state, zip_code, zip_code_ext,
