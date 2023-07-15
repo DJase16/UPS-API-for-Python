@@ -26,6 +26,9 @@ class UpsApiClientTesting:
         else:
             print('Refresh Token Expires in: ', self.refresh_ttl)
 
+    def set_access_token(self, token):
+        self.access_t = token
+
     # O-Auth Methods
     # This will validate your client and give you your initial token.
     def validate_client(self, debugging=False):
@@ -197,3 +200,50 @@ class UpsApiClientTesting:
 
         data = response.json()
         print(data)
+
+    # Dangerous Goods
+    # Chemical Reference Data. Determines what UPS allows.
+    def chemical_reference(self, version='v1'):
+        url = "https://wwwcie.ups.com/api/dangerousgoods/" + version + "/chemicalreferencedata"
+
+        payload = {
+            "ChemicalReferenceDataRequest": {
+                "IDNumber": "UN1088",
+                "ProperShippingName": "Acetal",
+                "ShipperNumber": "Your Shipper Number"
+            }
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "transID": self.client_id,
+            "transactionSrc": self.client_secret,
+            "Authorization": f'Bearer {self.access_t}'
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        data = response.json()
+        print(data)
+
+
+# Don't forget to comment this!
+def format_address(consignee_name, building_name, address_line, region, city, state, zip_code, zip_code_ext,
+                   urbanization, country_code):
+    payload = {
+        "XAVRequest": {
+            "AddressKeyFormat": {
+                "ConsigneeName": consignee_name,
+                "BuildingName": building_name,
+                "AddressLine": [address_line],
+                "Region": region,
+                "PoliticalDivision2": city,
+                "PoliticalDivision1": state,
+                "PostcodePrimaryLow": zip_code,
+                "PostcodeExtendedLow": zip_code_ext,
+                "Urbanization": urbanization,
+                "CountryCode": country_code
+            }
+        }
+    }
+    return payload
